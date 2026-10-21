@@ -143,13 +143,14 @@ class RecipeFormDialog(QDialog):
         self.table_ingredients.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.table_ingredients.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
         self.table_ingredients.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        self.table_ingredients.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        self.table_ingredients.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)
+        self.table_ingredients.setColumnWidth(4, 100)
         self.table_ingredients.horizontalHeader().setMinimumSectionSize(70)
         self.table_ingredients.verticalHeader().setVisible(False)
-        self.table_ingredients.verticalHeader().setDefaultSectionSize(30)
+        self.table_ingredients.verticalHeader().setDefaultSectionSize(42)
         self.table_ingredients.setSelectionBehavior(QTableWidget.SelectRows)
         self.table_ingredients.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.table_ingredients.setMinimumHeight(120)
+        self.table_ingredients.setMinimumHeight(175)
         ing_layout.addWidget(self.table_ingredients)
 
         main_layout.addWidget(ing_group)
@@ -275,11 +276,33 @@ class RecipeFormDialog(QDialog):
                     cost = 0.0
             self.table_ingredients.setItem(row, 3, QTableWidgetItem(f"S/. {cost:.2f}"))
 
-            # Botón para quitar ingrediente
-            btn_remove = QPushButton("❌ Quitar")
-            btn_remove.setObjectName("btnDanger")
+            # Botón para quitar ingrediente — compacto y centrado
+            btn_remove = QPushButton("✕ Quitar")
+            btn_remove.setStyleSheet(
+                "QPushButton {"
+                "    background-color: #C53030;"
+                "    color: #FFFFFF;"
+                "    border: none;"
+                "    border-radius: 3px;"
+                "    padding: 2px 6px;"
+                "    font-size: 11px;"
+                "    font-weight: 600;"
+                "}"
+                "QPushButton:hover {"
+                "    background-color: #9B2C2C;"
+                "}"
+            )
+            btn_remove.setFixedHeight(23)
+            btn_remove.setFixedWidth(72)
+            btn_remove.setCursor(Qt.PointingHandCursor)
             btn_remove.clicked.connect(lambda checked, idx=row: self.on_remove_ingredient(idx))
-            self.table_ingredients.setCellWidget(row, 4, btn_remove)
+
+            container = QWidget()
+            c_layout = QHBoxLayout(container)
+            c_layout.setContentsMargins(0, 0, 0, 0)
+            c_layout.setAlignment(Qt.AlignCenter)
+            c_layout.addWidget(btn_remove)
+            self.table_ingredients.setCellWidget(row, 4, container)
 
     def on_remove_ingredient(self, row_idx: int):
         if 0 <= row_idx < len(self.ingredients_buffer):
