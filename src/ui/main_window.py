@@ -110,4 +110,4 @@ class MainWindow(QMainWindow):
         status_bar = QStatusBar()
         self.setStatusBar(status_bar)
         db_path_str = str(self.db.db_path)
-        status_bar.showMessage(f"Base de datos local activa: {db_path_str} | Modo sin conexión garantizado")
+        status_bar.showMessage(f"Base de datos local activa: {db_path_str}")
