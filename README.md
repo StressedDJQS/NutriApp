@@ -1,88 +1,106 @@
-# NutriApp
-### Sistema Intuitivo de Planificación Nutricional y Requerimiento de Víveres Institucionales
+# NutriApp — Sistema de Planificación Nutricional y Requerimiento de Víveres
 
-## Descripción del proyecto
+NutriApp es una aplicación de escritorio desarrollada con **Python**, **PySide6** y **SQLite** diseñada para instituciones que preparan raciones alimentarias para múltiples comensales. Funciona de manera 100% local y autónoma, sin requerir conexión a internet ni servicios en la nube.
 
-**NutriApp** es un sistema orientado a facilitar la planificación nutricional y la gestión de víveres en instituciones que preparan alimentos para un número determinado de comensales.
+---
 
-El proyecto surge de la necesidad de simplificar tareas como el registro de alimentos, la elaboración de recetas, la planificación de menús semanales, el cálculo de requerimientos nutricionales y la determinación de las cantidades de insumos necesarios.
+## 🚀 Alcance Implementado (Sprint 1: T01 – T10)
 
-Asimismo, busca reducir las dificultades que presentan algunas herramientas actuales, como la complejidad de uso, la actualización de precios, la realización manual de cálculos nutricionales y la elaboración de reportes.
+1. **Catálogo y Registro de Alimentos (HU-01)**:
+   - Registro con nombre, categoría, unidad de medida, precio unitario y perfil nutricional (energía, proteínas, carbohidratos, grasas, fibra, sodio).
+   - Validaciones de valores no negativos, unidades coherentes y campos requeridos.
+   - Búsqueda por nombre en tiempo real, filtrado por categoría, edición y eliminación protegida (no permite eliminar alimentos en uso por recetas).
+   - Prevención de duplicados con cotejo insensible a mayúsculas y espacios.
 
-NutriApp pretende ofrecer una solución intuitiva y organizada que permita optimizar el trabajo del personal responsable de la planificación alimentaria, facilitar el control de costos y mejorar la gestión de los recursos destinados a la alimentación institucional.
+2. **Gestión de Recetas y Preparaciones (HU-02)**:
+   - Creación y edición de recetas con selector de ingredientes conectado al catálogo real.
+   - Validación de porciones base (> 0), cantidades (> 0) y presencia obligatoria de ingredientes.
+   - Cálculo automático y determinista de costos totales y costo por porción.
+   - Cálculo de aporte nutricional consolidado y por porción.
+   - **Escalado interactivo de porciones**: selector en tiempo real para simular cualquier número de comensales (ej. 4 a 10 porciones), recalculando los víveres requeridos, costo total y nutrientes.
+   - **Reutilización de recetas**: función para duplicar y adaptar preparaciones existentes.
 
-Un aspecto importante del proyecto es reducir la dependencia de una conexión a internet, considerando que la conectividad disponible puede ser lenta o inestable.
+3. **Almacenamiento Persistente en SQLite**:
+   - Modelo relacional normalizado con claves foráneas activas (`PRAGMA foreign_keys = ON;`).
+   - Ubicación persistente de la base de datos: `data/nutriapp.db`.
+   - Transacciones protegidas y consultas parametrizadas contra inyección SQL.
 
-## Objetivo general
+---
 
-Desarrollar un sistema intuitivo que facilite la planificación nutricional institucional mediante la gestión de alimentos, recetas, menús y requerimientos de víveres, automatizando cálculos nutricionales y económicos para mejorar la organización y el aprovechamiento de los recursos.
+## 📁 Estructura del Proyecto
 
-## Objetivos específicos
+```text
+NutriApp/
+│
+├── data/
+│   └── nutriapp.db             # Base de datos SQLite persistente
+│
+├── src/
+│   ├── database/
+│   │   ├── connection.py       # Gestor de conexiones y transacciones SQLite
+│   │   └── schema.py           # DDL con tablas foods, recipes y recipe_ingredients
+│   │
+│   ├── models/
+│   │   ├── food.py             # Modelo de datos para Alimentos
+│   │   └── recipe.py           # Modelos para Recetas e Ingredientes
+│   │
+│   ├── services/
+│   │   ├── unit_converter.py   # Conversión de unidades coherentes (masa, volumen, discretas)
+│   │   ├── nutrition_calc.py   # Cálculos deterministas de nutrientes, costos y escalado
+│   │   ├── food_service.py     # Lógica de negocio y validación de alimentos
+│   │   └── recipe_service.py   # Lógica de recetas, selector y persistencia
+│   │
+│   └── ui/
+│       ├── styles.py           # Hoja de estilos moderna QSS
+│       ├── food_view.py        # Pestaña y diálogo de gestión de alimentos
+│       ├── recipe_view.py      # Pestaña, diálogo de recetas y visor de escalado
+│       └── main_window.py      # Ventana principal PySide6 con pestañas integradas
+│
+├── tests/
+│   ├── conftest.py             # Fixtures de BD aislada temporal en memoria/tmp
+│   ├── test_food_service.py    # Pruebas de alimentos (CRUD, validaciones, duplicados)
+│   ├── test_recipe_service.py  # Pruebas de recetas (CRUD, validaciones, duplicados)
+│   ├── test_nutrition_calc.py  # Pruebas de cálculos de costos, nutrientes y escalado 4->10
+│   ├── test_unit_converter.py  # Pruebas de conversiones y compatibilidad de unidades
+│   ├── test_persistence.py     # Pruebas de persistencia real tras reiniciar conexión
+│   └── test_ui.py              # Pruebas automatizadas de la interfaz PySide6 (offscreen)
+│
+├── main.py                     # Punto de entrada de la aplicación
+├── requirements.txt            # Dependencias del proyecto (PySide6, pytest)
+└── README.md                   # Documentación técnica
+```
 
-- Facilitar el registro y la actualización de alimentos, precios e información nutricional.
-- Permitir la creación, almacenamiento y reutilización de recetas y preparaciones.
-- Simplificar la planificación de menús semanales según la cantidad de comensales.
-- Automatizar el cálculo de cantidades de ingredientes y aportes nutricionales.
-- Evaluar la adecuación nutricional de los menús de acuerdo con los requerimientos establecidos.
-- Consolidar las cantidades de alimentos e insumos necesarios para un periodo determinado.
-- Facilitar el seguimiento de los costos y del presupuesto destinado a la alimentación.
-- Generar reportes que permitan consultar y compartir la información de manera ordenada.
-- Considerar las necesidades de alimentación especial y la gestión de existencias como funcionalidades complementarias.
-- Favorecer el funcionamiento del sistema sin depender de una conexión permanente a internet.
+---
 
-## Funcionalidades principales
+## ⚙️ Requisitos e Instalación
 
-### 1. Gestión de alimentos
+1. **Python 3.10 o superior**.
+2. Activar el entorno virtual existente o crear uno nuevo:
+   ```bash
+   # En Windows PowerShell:
+   .\env\Scripts\Activate.ps1
+   ```
+3. Instalar las dependencias estrictamente necesarias:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Permite registrar, consultar y actualizar alimentos, incluyendo su información nutricional y sus precios, para mantener un catálogo organizado que sirva como base para las demás operaciones.
+---
 
-### 2. Gestión de recetas y preparaciones
+## ▶️ Ejecución de la Aplicación
 
-Facilita la creación y reutilización de recetas a partir de los alimentos registrados, definiendo los ingredientes, sus cantidades y las porciones correspondientes.
+Para iniciar la interfaz de escritorio de NutriApp:
 
-### 3. Planificación de menús
+```bash
+python main.py
+```
 
-Permite organizar menús semanales y ajustar las cantidades de los ingredientes de acuerdo con el número de comensales y los tiempos de comida establecidos.
+---
 
-### 4. Evaluación de la adecuación nutricional
+## 🧪 Ejecución de Pruebas Automatizadas
 
-Permite calcular el aporte nutricional de las preparaciones y comparar los resultados con los requerimientos establecidos. Se considera un rango de adecuación del 90 % al 110 %, de acuerdo con los criterios nutricionales que se definan para el proyecto.
+La suite incluye 35 pruebas automatizadas con `pytest` que evalúan todos los casos de negocio, persistencia, cálculos y la interfaz:
 
-### 5. Requerimiento de víveres
-
-Facilita la consolidación de los ingredientes necesarios para elaborar los menús planificados, evitando duplicaciones y ayudando a determinar las cantidades que deben adquirirse o utilizarse.
-
-### 6. Control de costos y presupuesto
-
-Permite estimar los costos de las preparaciones y realizar un seguimiento del presupuesto destinado a la alimentación institucional.
-
-### 7. Generación de reportes
-
-Busca facilitar la elaboración de minutas, requerimientos de víveres y reportes nutricionales y económicos en formatos útiles para el personal responsable.
-
-### 8. Funcionalidades complementarias
-
-Se contempla la incorporación progresiva de dietas especiales, control de inventario, registro de entradas y salidas de productos y consulta de saldos disponibles.
-
-## Alcance inicial del proyecto
-
-La primera versión de NutriApp priorizará las funcionalidades esenciales para gestionar alimentos y recetas, planificar menús, evaluar la adecuación nutricional y consolidar los requerimientos de víveres.
-
-Las funcionalidades complementarias, como el control de almacén, las dietas especiales y los reportes avanzados, podrán incorporarse progresivamente según las prioridades del proyecto.
-
-La migración de información desde sistemas anteriores no forma parte de las prioridades de la primera versión.
-
-## Beneficios esperados
-
-- Reducir el tiempo dedicado a la planificación de menús y al cálculo de cantidades.
-- Disminuir los errores asociados a los cálculos manuales.
-- Mantener organizada la información de alimentos, recetas y precios.
-- Mejorar la estimación de los requerimientos de víveres.
-- Facilitar el seguimiento de la adecuación nutricional y de los costos.
-- Simplificar la elaboración de reportes.
-- Reducir la dependencia de una conexión a internet estable.
-- Apoyar la toma de decisiones relacionadas con la planificación alimentaria institucional.
-
-## Visión del proyecto
-
-NutriApp busca convertirse en una herramienta práctica y accesible para la planificación nutricional institucional, facilitando el trabajo diario del personal responsable y contribuyendo a una gestión más ordenada, eficiente y controlada de los alimentos y los recursos disponibles.
+```bash
+pytest -v
+```
