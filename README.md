@@ -1,88 +1,118 @@
-# NutriApp
-### Sistema Intuitivo de Planificación Nutricional y Requerimiento de Víveres Institucionales
+# NutriApp — Sistema Web de Planificación Nutricional y Requerimiento de Víveres
 
-## Descripción del proyecto
+NutriApp es una aplicación web moderna diseñada para instituciones que planifican, preparan y gestionan raciones alimentarias para múltiples comensales. El sistema permite administrar inventarios de alimentos, escalar recetas dinámicamente y planificar menús semanales evaluando su adecuación calórica y consolidando la lista de compras.
 
-**NutriApp** es un sistema orientado a facilitar la planificación nutricional y la gestión de víveres en instituciones que preparan alimentos para un número determinado de comensales.
+---
 
-El proyecto surge de la necesidad de simplificar tareas como el registro de alimentos, la elaboración de recetas, la planificación de menús semanales, el cálculo de requerimientos nutricionales y la determinación de las cantidades de insumos necesarios.
+## 🚀 Alcance y Funcionalidades
 
-Asimismo, busca reducir las dificultades que presentan algunas herramientas actuales, como la complejidad de uso, la actualización de precios, la realización manual de cálculos nutricionales y la elaboración de reportes.
+1. **Catálogo y Registro de Alimentos**:
+   - Mantenimiento completo (CRUD) de alimentos con categoría, unidad física y precio unitario.
+   - Registro del perfil nutricional base (energía, proteínas, carbohidratos, grasas, fibra, sodio).
+   - Cálculos estandarizados manejados desde el backend para compatibilidad entre sistemas de unidades (Masa, Volumen y Unidades discretas).
 
-NutriApp pretende ofrecer una solución intuitiva y organizada que permita optimizar el trabajo del personal responsable de la planificación alimentaria, facilitar el control de costos y mejorar la gestión de los recursos destinados a la alimentación institucional.
+2. **Gestión de Recetas y Preparaciones**:
+   - Creación de recetas interconectadas al catálogo de alimentos.
+   - **Herencia/Clonación**: Capacidad de duplicar una receta existente para crear variaciones sin afectar la original.
+   - **Calculadora de Escalado**: Motor dinámico que permite proyectar recetas a diferentes cantidades de porciones, recalculando insumos, costos y nutrientes en tiempo real.
 
-Un aspecto importante del proyecto es reducir la dependencia de una conexión a internet, considerando que la conectividad disponible puede ser lenta o inestable.
+3. **Planificador de Menús y Cronogramas**:
+   - Asignación de recetas por días de la semana y tiempos de comida (Desayuno, Almuerzo, Cena, etc.).
+   - **Reporte de Adecuación Nutricional**: Validación inteligente que compara el menú contra una meta calórica y determina si cumple con la "Regla de Oro" institucional (90% - 110%).
+   - **Consolidado de Víveres**: Generación automática de listas de compras agrupadas por alimento, con unidades estandarizadas (ej. gramos a kilogramos) y proyección de costos totales.
 
-## Objetivo general
+---
 
-Desarrollar un sistema intuitivo que facilite la planificación nutricional institucional mediante la gestión de alimentos, recetas, menús y requerimientos de víveres, automatizando cálculos nutricionales y económicos para mejorar la organización y el aprovechamiento de los recursos.
+## 🛠️ Arquitectura y Tecnologías
 
-## Objetivos específicos
+El proyecto ha migrado a una arquitectura web cliente-servidor, separando la lógica de negocio de la interfaz de usuario:
 
-- Facilitar el registro y la actualización de alimentos, precios e información nutricional.
-- Permitir la creación, almacenamiento y reutilización de recetas y preparaciones.
-- Simplificar la planificación de menús semanales según la cantidad de comensales.
-- Automatizar el cálculo de cantidades de ingredientes y aportes nutricionales.
-- Evaluar la adecuación nutricional de los menús de acuerdo con los requerimientos establecidos.
-- Consolidar las cantidades de alimentos e insumos necesarios para un periodo determinado.
-- Facilitar el seguimiento de los costos y del presupuesto destinado a la alimentación.
-- Generar reportes que permitan consultar y compartir la información de manera ordenada.
-- Considerar las necesidades de alimentación especial y la gestión de existencias como funcionalidades complementarias.
-- Favorecer el funcionamiento del sistema sin depender de una conexión permanente a internet.
+### Backend (API REST)
+- **Framework**: Python / Django
+- **API Toolkit**: Django Ninja (Tipado estático y validación con Pydantic)
+- **Base de Datos**: SQLite (Preparado para migrar a PostgreSQL)
+- **Capa de Servicios**: Aislamiento de la lógica compleja (`services.py` para conversión de unidades, matemáticas de escalado y consolidación de víveres).
 
-## Funcionalidades principales
+### Frontend (SPA)
+- **Librería Core**: React 18
+- **Build Tool**: Vite
+- **Estilos**: Tailwind CSS v4
+- **Iconografía**: Lucide React
+- **Peticiones HTTP**: Axios (Centralizado en `client.js`)
 
-### 1. Gestión de alimentos
+---
 
-Permite registrar, consultar y actualizar alimentos, incluyendo su información nutricional y sus precios, para mantener un catálogo organizado que sirva como base para las demás operaciones.
+## 📁 Estructura del Proyecto
 
-### 2. Gestión de recetas y preparaciones
+```text
+NutriApp/
+│
+├── backend/                    # Servidor API Django
+│   ├── core/
+│   │   ├── models.py           # Modelos de base de datos relacional
+│   │   ├── schemas.py          # Esquemas de validación de entrada/salida (Ninja)
+│   │   ├── api.py              # Definición de rutas RESTful
+│   │   └── services.py         # Lógica de negocio, cálculos y reportes
+│   └── manage.py
+│
+├── frontend/                   # Aplicación Web React
+│   ├── src/
+│   │   ├── api/
+│   │   │   └── client.js       # Configuración de Axios
+│   │   ├── components/
+│   │   │   ├── CreateFoodModal.jsx
+│   │   │   └── CreateRecipeModal.jsx
+│   │   ├── pages/
+│   │   │   ├── Foods.jsx       # Interfaz del Catálogo
+│   │   │   ├── Recipes.jsx     # Gestión y escalado de recetas
+│   │   │   └── Menus.jsx       # Planificador y reportes visuales
+│   │   ├── Layout.jsx          # Estructura de navegación base
+│   │   └── main.jsx            # Punto de entrada de React
+│   ├── package.json
+│   └── vite.config.js
+│
+└── README.md
+```
 
-Facilita la creación y reutilización de recetas a partir de los alimentos registrados, definiendo los ingredientes, sus cantidades y las porciones correspondientes.
+---
 
-### 3. Planificación de menús
+## ⚙️ Instalación y Configuración Local
 
-Permite organizar menús semanales y ajustar las cantidades de los ingredientes de acuerdo con el número de comensales y los tiempos de comida establecidos.
+### 1. Configurar el Backend (Django)
+Abre una terminal en la carpeta del backend:
+```bash
+# 1. Crear y activar entorno virtual
+python -m venv venv
+# En Windows: venv\Scripts\activate
+# En Mac/Linux: source venv/bin/activate
 
-### 4. Evaluación de la adecuación nutricional
+# 2. Instalar dependencias
+pip install django django-ninja django-cors-headers
 
-Permite calcular el aporte nutricional de las preparaciones y comparar los resultados con los requerimientos establecidos. Se considera un rango de adecuación del 90 % al 110 %, de acuerdo con los criterios nutricionales que se definan para el proyecto.
+# 3. Aplicar migraciones a la base de datos
+python manage.py makemigrations
+python manage.py migrate
 
-### 5. Requerimiento de víveres
+# 4. Iniciar el servidor (por defecto en http://localhost:8000)
+python manage.py runserver
+```
 
-Facilita la consolidación de los ingredientes necesarios para elaborar los menús planificados, evitando duplicaciones y ayudando a determinar las cantidades que deben adquirirse o utilizarse.
+### 2. Configurar el Frontend (React/Vite)
+Abre otra terminal en la carpeta del frontend:
+```bash
+# 1. Instalar dependencias de Node
+npm install
 
-### 6. Control de costos y presupuesto
+# 2. Iniciar el servidor de desarrollo (por defecto en http://localhost:5173)
+npm run dev
+```
 
-Permite estimar los costos de las preparaciones y realizar un seguimiento del presupuesto destinado a la alimentación institucional.
+---
 
-### 7. Generación de reportes
+## 📖 Uso
 
-Busca facilitar la elaboración de minutas, requerimientos de víveres y reportes nutricionales y económicos en formatos útiles para el personal responsable.
-
-### 8. Funcionalidades complementarias
-
-Se contempla la incorporación progresiva de dietas especiales, control de inventario, registro de entradas y salidas de productos y consulta de saldos disponibles.
-
-## Alcance inicial del proyecto
-
-La primera versión de NutriApp priorizará las funcionalidades esenciales para gestionar alimentos y recetas, planificar menús, evaluar la adecuación nutricional y consolidar los requerimientos de víveres.
-
-Las funcionalidades complementarias, como el control de almacén, las dietas especiales y los reportes avanzados, podrán incorporarse progresivamente según las prioridades del proyecto.
-
-La migración de información desde sistemas anteriores no forma parte de las prioridades de la primera versión.
-
-## Beneficios esperados
-
-- Reducir el tiempo dedicado a la planificación de menús y al cálculo de cantidades.
-- Disminuir los errores asociados a los cálculos manuales.
-- Mantener organizada la información de alimentos, recetas y precios.
-- Mejorar la estimación de los requerimientos de víveres.
-- Facilitar el seguimiento de la adecuación nutricional y de los costos.
-- Simplificar la elaboración de reportes.
-- Reducir la dependencia de una conexión a internet estable.
-- Apoyar la toma de decisiones relacionadas con la planificación alimentaria institucional.
-
-## Visión del proyecto
-
-NutriApp busca convertirse en una herramienta práctica y accesible para la planificación nutricional institucional, facilitando el trabajo diario del personal responsable y contribuyendo a una gestión más ordenada, eficiente y controlada de los alimentos y los recursos disponibles.
+1. Inicia ambos servidores (Backend y Frontend).
+2. Abre tu navegador en la URL indicada por Vite (usualmente `http://localhost:5173`).
+3. Empieza poblando el **Catálogo de Alimentos**.
+4. Crea **Recetas**, prueba la calculadora de porciones o hereda preparaciones.
+5. Finalmente, arma tu **Menú Semanal** y genera los reportes de adecuación y víveres para la semana.
